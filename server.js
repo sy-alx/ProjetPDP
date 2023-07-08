@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
+
 
 const app = express();
 app.use(express.json()); // pour le parsing du JSON
@@ -18,6 +20,10 @@ connection.connect((err) => {
   console.log('Connected to the database');
 });
 
+
+
+
+app.use(cors());
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const query = 'SELECT * FROM utilisateurs WHERE Email = ?';
@@ -39,6 +45,7 @@ app.post('/login', (req, res) => {
     }
   });
 });
+
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

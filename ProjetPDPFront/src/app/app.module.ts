@@ -7,11 +7,15 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { HttpClientModule } from '@angular/common/http';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -19,7 +23,8 @@ import { PasswordModule } from 'primeng/password';
     CardModule,
     ButtonModule,
     InputTextModule,
-    PasswordModule
+    PasswordModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
