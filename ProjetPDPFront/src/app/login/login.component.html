@@ -1,0 +1,15 @@
+<p-card header="Login">
+    <form (ngSubmit)="login()">
+        <div class="p-fluid">
+            <div class="p-field">
+                <label for="username">Username</label>
+                <input id="username" type="text" pInputText [(ngModel)]="username" name="username" required>
+            </div>
+            <div class="p-field">
+                <label for="password">Password</label>
+                <input id="password" type="password" pPassword [(ngModel)]="password" name="password" required>
+            </div>
+            <button pButton type="submit" label="Submit"></button>
+        </div>
+    </form>
+</p-card>
