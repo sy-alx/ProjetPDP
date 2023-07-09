@@ -1,15 +1,17 @@
-<p-card header="Login">
-    <form (ngSubmit)="login(username.value, password.value)">
+<p-card header="Connexion">
+    <form (ngSubmit)="login(Email.value, MotDePasse.value)">
         <div class="p-fluid">
             <div class="p-field">
-                <label for="username">Username</label>
-                <input id="username" type="text" pInputText #username required>
+                <label for="username">Email</label>
+                <input id="username" type="text" pInputText #Email required>
             </div>
             <div class="p-field">
-                <label for="password">Password</label>
-                <input id="password" type="password" pPassword #password required>
+                <label for="password">Mot de passe</label>
+                <input id="password" type="password" class="p-inputtext" #MotDePasse required>
             </div>
-            <button pButton type="submit" label="Submit"></button>
+            <br>
+            <button pButton type="submit" label="Connexion"></button>
         </div>
     </form>
 </p-card>
+

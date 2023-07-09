@@ -10,7 +10,10 @@ import { PasswordModule } from 'primeng/password';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AppRoutingModule } from './app-routing.module';
-
+import { MenubarModule } from 'primeng/menubar';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService} from 'primeng/api';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -26,9 +29,14 @@ import { AppRoutingModule } from './app-routing.module';
     InputTextModule,
     PasswordModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MenubarModule,
+    ConfirmDialogModule,
+    BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [
+    ConfirmationService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

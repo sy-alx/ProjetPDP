@@ -29,4 +29,5 @@ export class LoginComponent implements OnInit {
         console.log("Erreur lors de la connexion:", error);
       });
   }
+
 }
