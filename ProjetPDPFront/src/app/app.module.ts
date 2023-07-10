@@ -14,12 +14,15 @@ import { MenubarModule } from 'primeng/menubar';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService} from 'primeng/api';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ProfilComponent } from './profil/profil.component';
+import { FieldsetModule } from 'primeng/fieldset';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    ProfilComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +35,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppRoutingModule,
     MenubarModule,
     ConfirmDialogModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FieldsetModule,
+    
   ],
   providers: [
     ConfirmationService

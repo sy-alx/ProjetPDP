@@ -1,0 +1,32 @@
+<!-- profil.component.html -->
+<button pButton type="button" label="Retour au tableau de bord" (click)="goToDashboard()"></button>
+
+<br><br>
+<p-fieldset legend="Profil" *ngIf="user">
+    <p>Nom: {{ user.UtilisateursNom }}</p>
+    <p>Prénom: {{ user.UtilisateursPrenom }}</p>
+    <p>Numéro Siret: {{ user.NumeroSiret }}</p>
+    <p>Nom de l'entreprise: {{ user.NomEntreprise }}</p>
+    <p>Numéro de téléphone: 
+        <span *ngIf="!editMode">{{ user.NumeroTelephone }}</span>
+        <input *ngIf="editMode" [(ngModel)]="user.NumeroTelephone" (input)="changesMade = true">
+      </p>
+      <p>Email: 
+        <span *ngIf="!editMode">{{ user.Email }}</span>
+        <input *ngIf="editMode" [(ngModel)]="user.Email" (input)="changesMade = true">
+      </p>
+    
+      <div *ngIf="editMode">
+        <label for="oldPassword">Ancien mot de passe:</label>
+        <input type="password" id="oldPassword" [(ngModel)]="oldPassword" (input)="changesMade = true">
+        
+        <label for="newPassword">Nouveau mot de passe:</label>
+        <input type="password" id="newPassword" [(ngModel)]="newPassword" (input)="changesMade = true">
+      </div>
+
+    <br><br>
+    <button class="red-button" pButton type="button" (click)="editMode = !editMode">{{ editMode ? 'Quitter le mode modificiation' : 'Entrer en mode modification' }}</button>
+    <button pButton *ngIf="editMode" [disabled]="!changesMade" (click)="updateUser(); updatePassword()">Enregistrer les modifications</button>
+
+</p-fieldset>
+

@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit {
         label: 'Profil',
         icon: 'pi pi-fw pi-user',
         command: () => {
-          // Votre code pour afficher le profil
+          this.router.navigate(['/profil']);
         }
       },
       {
