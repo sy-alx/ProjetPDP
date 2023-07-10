@@ -12,6 +12,9 @@ interface User {
   NumeroTelephone?: string;
   Email?: string;
   MotDePasse?: string;
+  AdressePostal?: string;
+  NumeroTVA?: string;
+  RCS?: string;
 }
 
 interface PasswordResponse {

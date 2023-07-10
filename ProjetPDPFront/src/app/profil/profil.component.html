@@ -5,25 +5,29 @@
 
 <br><br>
 <p-fieldset legend="Profil" *ngIf="user">
-    <p>Nom: {{ user.UtilisateursNom }}</p>
-    <p>Prénom: {{ user.UtilisateursPrenom }}</p>
-    <p>Numéro Siret: {{ user.NumeroSiret }}</p>
-    <p>Nom de l'entreprise: {{ user.NomEntreprise }}</p>
-    <p>Numéro de téléphone: 
+    <p><strong>Nom: </strong> {{ user.UtilisateursNom }}</p>
+    <p><strong>Prénom: </strong>{{ user.UtilisateursPrenom }}</p>
+    <p><strong>Nom de l'entreprise:</strong> {{ user.NomEntreprise }}</p>
+    <p><strong>Adresse de l'entreprise:</strong> {{ user.AdressePostal }}</p>
+    <p><strong>Numéro Siret:</strong> {{ user.NumeroSiret }}</p>
+    <p><strong>Numéro de TVA:</strong> {{ user.NumeroTVA }}</p>
+    <p><strong>Référence RCS:</strong> {{ user.RCS }}</p>
+    
+    <p><strong>Numéro de téléphone: </strong>
         <span *ngIf="!editMode">{{ user.NumeroTelephone }}</span>
         <input *ngIf="editMode" [(ngModel)]="user.NumeroTelephone" (input)="changesMade = true">
       </p>
-      <p>Email: 
+      <p><strong>Email: </strong>
         <span *ngIf="!editMode">{{ user.Email }}</span>
         <input *ngIf="editMode" [(ngModel)]="user.Email" (input)="changesMade = true">
       </p>
     
       <div *ngIf="editMode">
-        <label for="oldPassword">Ancien mot de passe: </label>
+        <label for="oldPassword"><strong>Ancien mot de passe:</strong> </label>
         <input type="password" id="oldPassword" [(ngModel)]="oldPassword" (input)="changesMade = true">
         
         <br>
-        <label for="newPassword">Nouveau mot de passe: </label>
+        <label for="newPassword"><strong>Nouveau mot de passe:</strong> </label>
         <input [type]="showPassword ? 'text' : 'password'" id="newPassword" [(ngModel)]="newPassword" (input)="changesMade = true">
         <input type="checkbox" [(ngModel)]="showPassword"> Voir
 
