@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 
 
 @Component({
@@ -16,6 +17,14 @@ export class DashboardComponent implements OnInit {
   
 
   ngOnInit() {
+    const welcomeMessageShown = localStorage.getItem('welcomeMessageShown');
+    if (welcomeMessageShown === 'false') {
+      setTimeout(() => {
+        this.messageService.add({severity:'success',life: 5000, summary:'Bonjour', detail:`Bienvenue sur votre plateforme de dématérialisation partenaire !`});
+      }, 900);
+      localStorage.setItem('welcomeMessageShown', 'true');
+    }
+    
     this.items = [
       {
         label: 'Emettre une facture',
@@ -56,12 +65,14 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  constructor(private router: Router, private confirmationService: ConfirmationService) { }
+  constructor(private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService) { }
   logout() {
    this.confirmationService.confirm({
       message: 'Êtes-vous sûr de vouloir vous déconnecter ?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Oui',
+      rejectLabel: 'Non', 
       accept: () => {
         localStorage.removeItem('token');
         this.router.navigate(['/login']);

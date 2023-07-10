@@ -1,6 +1,8 @@
 <!-- profil.component.html -->
 <button pButton type="button" label="Retour au tableau de bord" (click)="goToDashboard()"></button>
 
+<p-toast></p-toast>
+
 <br><br>
 <p-fieldset legend="Profil" *ngIf="user">
     <p>Nom: {{ user.UtilisateursNom }}</p>
@@ -17,11 +19,14 @@
       </p>
     
       <div *ngIf="editMode">
-        <label for="oldPassword">Ancien mot de passe:</label>
+        <label for="oldPassword">Ancien mot de passe: </label>
         <input type="password" id="oldPassword" [(ngModel)]="oldPassword" (input)="changesMade = true">
         
-        <label for="newPassword">Nouveau mot de passe:</label>
-        <input type="password" id="newPassword" [(ngModel)]="newPassword" (input)="changesMade = true">
+        <br>
+        <label for="newPassword">Nouveau mot de passe: </label>
+        <input [type]="showPassword ? 'text' : 'password'" id="newPassword" [(ngModel)]="newPassword" (input)="changesMade = true">
+        <input type="checkbox" [(ngModel)]="showPassword"> Voir
+
       </div>
 
     <br><br>
@@ -29,4 +34,6 @@
     <button pButton *ngIf="editMode" [disabled]="!changesMade" (click)="updateUser(); updatePassword()">Enregistrer les modifications</button>
 
 </p-fieldset>
+
+<p-confirmDialog></p-confirmDialog>
 

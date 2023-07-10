@@ -16,6 +16,8 @@ import {ConfirmationService} from 'primeng/api';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProfilComponent } from './profil/profil.component';
 import { FieldsetModule } from 'primeng/fieldset';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -37,10 +39,12 @@ import { FieldsetModule } from 'primeng/fieldset';
     ConfirmDialogModule,
     BrowserAnimationsModule,
     FieldsetModule,
+    ToastModule,
     
   ],
   providers: [
-    ConfirmationService
+    ConfirmationService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })
