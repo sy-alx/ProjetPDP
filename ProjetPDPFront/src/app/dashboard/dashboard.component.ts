@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit {
         label: 'Emettre une facture',
         icon: 'pi pi-fw pi-plus',
         command: () => {
-          // Votre code pour émettre une facture
+          this.router.navigate(['/create-invoice']);
         }
       },
       {

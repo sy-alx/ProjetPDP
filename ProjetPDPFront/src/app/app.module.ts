@@ -18,13 +18,16 @@ import { ProfilComponent } from './profil/profil.component';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { CreateInvoiceComponent } from './create-invoice/create-invoice.component';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    ProfilComponent
+    ProfilComponent,
+    CreateInvoiceComponent
   ],
   imports: [
     BrowserModule,
@@ -40,6 +43,7 @@ import { MessageService } from 'primeng/api';
     BrowserAnimationsModule,
     FieldsetModule,
     ToastModule,
+    FileUploadModule,
     
   ],
   providers: [
