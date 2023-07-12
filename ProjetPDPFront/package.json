@@ -22,6 +22,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
     "mysql": "^2.18.1",
+    "pdfjs-dist": "^3.8.162",
     "primeicons": "^6.0.1",
     "primeng": "^16.0.2",
     "rxjs": "~7.8.0",

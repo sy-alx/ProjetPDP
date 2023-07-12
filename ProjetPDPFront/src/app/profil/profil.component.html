@@ -35,7 +35,10 @@
 
     <br><br>
     <button class="red-button" pButton type="button" (click)="editMode = !editMode">{{ editMode ? 'Quitter le mode modificiation' : 'Entrer en mode modification' }}</button>
-    <button pButton *ngIf="editMode" [disabled]="!changesMade" (click)="updateUser(); updatePassword()">Enregistrer les modifications</button>
+    <button pButton *ngIf="editMode" [disabled]="!changesMade" (click)="updateEverything()">Enregistrer les modifications</button>
+
+
+
 
 </p-fieldset>
 

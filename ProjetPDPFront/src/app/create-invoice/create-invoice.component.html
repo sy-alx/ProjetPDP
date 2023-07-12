@@ -3,7 +3,7 @@
 
 <p-fieldset legend="Emettre une facture">
     <p>Déposez votre facture</p>
-    <p-fileUpload name="demo[]" url=""(onUpload)="onUpload($event)" mode="basic" chooseLabel="Choisir un fichier" [maxFileSize]="maxFileSize" [multiple]="false">
+    <p-fileUpload name="demo[]" (onSelect)="onUpload($event)" mode="basic" chooseLabel="Choisir un fichier" [maxFileSize]="maxFileSize" [multiple]="false">
         <p-header>
             Glissez-déposez des fichiers ici pour les télécharger
         </p-header>

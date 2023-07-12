@@ -58,7 +58,7 @@ export class ProfilComponent implements OnInit {
 
   //-----------------------------------------------------------------------------------------------------
 
-  updateUser() {
+  updateEverything(): void {
     this.confirmationService.confirm({
       message: 'Êtes-vous sûr de vouloir enregistrer les modifications ?',
       header: 'Confirmation',
@@ -66,40 +66,8 @@ export class ProfilComponent implements OnInit {
       acceptLabel: 'Oui',
       rejectLabel: 'Non',
       accept: () => {
-        if (!this.user) {
-          console.log('No user to update');
-          return;
-        }
-
-        const phoneRegex = /^\d{10}$/;
-        if (!phoneRegex.test(this.user.NumeroTelephone || '')) {
-          this.messageService.add({ severity: 'error', summary: 'Erreur', life: 5000, detail: 'Le numéro de téléphone doit être constitué de 10 chiffres.' });
-          return;
-        }
-
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(this.user.Email || '')) {
-          this.messageService.add({ severity: 'error', summary: 'Erreur', life: 5000, detail: 'Veuillez entrer un e-mail valide.' });
-          return;
-        }
-
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.log('Token not found in local storage');
-          return;
-        }
-
-        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-        this.http.put('http://localhost:3000/api/user', this.user, { headers }).subscribe(() => {
-          this.messageService.add({ severity: 'info', summary: 'Succès', life: 5000, detail: 'Profil mis à jour avec succès!' });
-          this.editMode = false;
-          this.originalUser = null;
-        });
-
-        if (this.newPassword.trim() !== '') {
-          this.updatePassword();
-        }
+        this.updateUser();
+        this.updatePassword();
       },
       reject: () => {
         // L'utilisateur a refusé l'enregistrement des modifications
@@ -107,6 +75,56 @@ export class ProfilComponent implements OnInit {
       }
     });
   }
+  
+
+  updateUser() {
+        console.log("Confirmation accepted");
+  
+        if (!this.user) {
+          console.log('No user to update');
+          return;
+        }
+  
+        console.log("About to check phone and email");
+  
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(this.user.NumeroTelephone || '')) {
+          this.messageService.add({ severity: 'error', summary: 'Erreur', life: 5000, detail: 'Le numéro de téléphone doit être constitué de 10 chiffres.' });
+          return;
+        }
+  
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(this.user.Email || '')) {
+          this.messageService.add({ severity: 'error', summary: 'Erreur', life: 5000, detail: 'Veuillez entrer un e-mail valide.' });
+          return;
+        }
+  
+        console.log("About to fetch token from local storage");
+  
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.log('Token not found in local storage');
+          return;
+        }
+  
+        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  
+        console.log("About to make the HTTP request");
+  
+        this.http.put('http://localhost:3000/api/user', this.user, { headers }).subscribe(() => {
+          console.log("HTTP request succeeded");
+          this.messageService.add({ severity: 'info', summary: 'Succès', life: 5000, detail: 'Profil mis à jour avec succès!' });
+          this.editMode = false;
+          this.originalUser = null;
+        }, error => {
+          console.error('HTTP request failed', error);
+          this.messageService.add({ severity: 'error', summary: 'Erreur', life: 5000, detail: `Erreur du serveur : ${error.message}` });
+        });
+  
+
+      }
+      
+  
 
 
 
@@ -115,13 +133,6 @@ export class ProfilComponent implements OnInit {
 
   updatePassword() {
 
-    this.confirmationService.confirm({
-      message: 'Êtes-vous sûr de vouloir enregistrer les modifications ?',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Oui',
-      rejectLabel: 'Non',
-      accept: () => {
         if (!this.user) {
           console.log('No user to update');
           return;
@@ -146,10 +157,6 @@ export class ProfilComponent implements OnInit {
           });
         }
       }
-    });
-
-
-  }
 
   //-----------------------------------------------------------------------------------------------------
 

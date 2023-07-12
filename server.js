@@ -101,6 +101,7 @@ app.put('/api/user', authenticateToken, (req, res) => {
         console.log('Error executing query:', err);
         res.status(500).json({ message: 'Error updating user' });
       } else {
+        console.log('Query results:', results);
         res.status(200).json({ message: 'User updated successfully' });
       }
     });
@@ -108,7 +109,7 @@ app.put('/api/user', authenticateToken, (req, res) => {
 
 
 
-  
+
   app.post('/api/verifyPassword', authenticateToken, (req, res) => {
     const { oldPassword } = req.body;
     const query = 'SELECT * FROM utilisateurs WHERE IDutilisateurs = ?';
