@@ -1,14 +1,33 @@
 <button pButton type="button" label="Retour au tableau de bord" (click)="goToDashboard()"></button>
 <br><br>
+<p-toast></p-toast>
 
 <p-fieldset legend="Emettre une facture">
-    <p>Déposez votre facture</p>
-    <p-fileUpload name="demo[]" (onSelect)="onUpload($event)" mode="basic" chooseLabel="Choisir un fichier" [maxFileSize]="maxFileSize" [multiple]="false">
-        <p-header>
-            Glissez-déposez des fichiers ici pour les télécharger
-        </p-header>
-    </p-fileUpload>
+    <p-fieldset legend="Saisissez le Siret de votre correspondant">
+        <p-autoComplete [(ngModel)]="siretInput" [suggestions]="filteredUsers" (completeMethod)="filterUsers($event)" field="NumeroSiret" [dropdown]="true" [disabled]="siretIsSelected">
 
+            <ng-template let-user pTemplate="item">
+                <div class="user-details">
+                    <div>{{user.NomEntreprise}}</div>
+                
+                </div>
+            </ng-template>
+        </p-autoComplete>
+        <button pButton type="button" class="ValidSiret" label="Valider le SIRET" (click)="onSelectSiret(siretInput)" [disabled]="siretIsSelected"></button>
+        <button pButton type="button" class="ValidSiret" (click)="clearSiret()" [disabled]="!siretIsValid">&#10005;</button>
+    </p-fieldset>
 
+    <br>
 
+    <p-fieldset legend="Ajoutez votre Facture">
+        <p><i>Format demandé : Facture-X <sup>(PDF+XML) </sup> / XML / JSON </i></p>
+        <div class="upload-container">
+            <p-fileUpload #fileUpload name="demo[]" accept=".xml,.json,.pdf" (onSelect)="onUpload($event)" mode="basic"  chooseLabel="Choisir un fichier" [maxFileSize]="maxFileSize" [multiple]="false" [disabled]="!siretIsValid">
+                <p-header>
+                    Glissez-déposez des fichiers ici pour les télécharger
+                </p-header>
+            </p-fileUpload>
+            <button pButton type="button" class="clear-button" (click)="clearFile()" [disabled]="!siretIsValid">&#10005;</button>
+        </div>
+    </p-fieldset>
 </p-fieldset>

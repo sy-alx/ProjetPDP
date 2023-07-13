@@ -1,0 +1,13 @@
+.upload-container {
+    display: flex;
+    align-items: center;
+}
+
+.clear-button {
+    margin-left: 5px;
+    font-size: 15px;
+}
+
+.ValidSiret {
+    margin-left: 5px;
+}

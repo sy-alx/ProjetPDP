@@ -20,6 +20,8 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CreateInvoiceComponent } from './create-invoice/create-invoice.component';
 import { FileUploadModule } from 'primeng/fileupload';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+
 
 @NgModule({
   declarations: [
@@ -44,6 +46,7 @@ import { FileUploadModule } from 'primeng/fileupload';
     FieldsetModule,
     ToastModule,
     FileUploadModule,
+    AutoCompleteModule,
     
   ],
   providers: [

@@ -105,9 +105,26 @@ app.put('/api/user', authenticateToken, (req, res) => {
         res.status(200).json({ message: 'User updated successfully' });
       }
     });
+});
+
+// Route to get all users
+app.get('/api/users', authenticateToken, (req, res) => {
+    const query = 'SELECT * FROM utilisateurs';
+    connection.query(query, (err, results) => {
+      if (err) {
+        console.log('Error executing query:', err);
+        throw err;
+      }
+  
+      if (results.length > 0) {
+        res.json(results);
+      } else {
+        res.status(404).send('No users found');
+      }
+    });
   });
-
-
+  
+  
 
 
   app.post('/api/verifyPassword', authenticateToken, (req, res) => {
