@@ -16,6 +16,7 @@
             "outputPath": "dist/projet-pdpfront",
             "index": "src/index.html",
             "main": "src/main.ts",
+            "allowedCommonJsDependencies": ["timers"],
             "polyfills": [
               "zone.js"
             ],

@@ -170,6 +170,27 @@ app.get('/api/users', authenticateToken, (req, res) => {
       });
     });
   });
+
+
+  // Route pour obtenir un utilisateur spécifique en fonction du numéro de SIRET
+    app.get('/api/users/:siret', authenticateToken, (req, res) => {
+        const siret = req.params.siret;
+        const query = 'SELECT * FROM utilisateurs WHERE NumeroSiret = ?';
+        connection.query(query, [siret], (err, results) => {
+            if (err) {
+                console.log('Error executing query:', err);
+                throw err;
+            }
+        
+            if (results.length > 0) {
+                const user = results[0];
+                res.json(user);
+            } else {
+                res.status(404).send('User not found');
+            }
+        });
+    });
+  
   
   
   

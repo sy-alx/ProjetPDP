@@ -30,4 +30,44 @@
             <button pButton type="button" class="clear-button" (click)="clearFile()" [disabled]="!siretIsValid">&#10005;</button>
         </div>
     </p-fieldset>
+
+    <br>
+
+    <p-fieldset legend="Émetteur">
+        <div class="field" *ngIf="matchingEmetteurData.NomEntreprise">
+          <label>Nom de l'entreprise :</label>
+          <p>{{matchingEmetteurData.NomEntreprise}}</p>
+        </div>
+        <div class="field" *ngIf="matchingEmetteurData.NumeroSiret">
+          <label>Siret :</label>
+          <p>{{matchingEmetteurData.NumeroSiret}}</p>
+        </div>
+        <div class="field" *ngIf="matchingEmetteurData.NumeroTVA">
+          <label>Numéro de TVA :</label>
+          <p>{{matchingEmetteurData.NumeroTVA}}</p>
+        </div>
+      </p-fieldset>
+    
+    <br>
+    
+    <p-fieldset legend="Correspondant">
+        <div class="field" *ngIf="matchingCorrespondantData.NomEntreprise">
+          <label>Nom de l'entreprise :</label>
+          <p>{{matchingCorrespondantData.NomEntreprise}}</p>
+        </div>
+        <div class="field" *ngIf="matchingCorrespondantData.NumeroSiret">
+          <label>Siret :</label>
+          <p>{{matchingCorrespondantData.NumeroSiret}}</p>
+        </div>
+        <div class="field" *ngIf="matchingCorrespondantData.NumeroTVA">
+          <label>Numéro de TVA :</label>
+          <p>{{matchingCorrespondantData.NumeroTVA}}</p>
+        </div>
+      </p-fieldset>
+    
+
+
+
+
+
 </p-fieldset>
