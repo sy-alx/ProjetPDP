@@ -9,6 +9,9 @@ import { ViewChild } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { InvoiceService } from '../services/invoice-service.service'; 
+import { InvoiceData } from '../invoice-data.model';
+
 interface User {
   NumeroSiret: string;
 }
@@ -55,7 +58,7 @@ export class CreateInvoiceComponent implements OnInit {
   emetteur: any = {};
   correspondant: any = {};
 
-  constructor(private router: Router, private pdfService: PdfService, private http: HttpClient, private messageService: MessageService, private cdr: ChangeDetectorRef) { }
+  constructor(private router: Router, private pdfService: PdfService, private http: HttpClient, private messageService: MessageService, private cdr: ChangeDetectorRef, private invoiceService: InvoiceService) { }
 
 
   ngOnInit(): void {
@@ -225,8 +228,48 @@ export class CreateInvoiceComponent implements OnInit {
     // Force change detection
     this.cdr.detectChanges();
   }
+
+
+  isFormValid(): boolean {
+    return !!this.invoiceData.invoiceNumber &&
+           !!this.invoiceData.totalHT &&
+           !!this.invoiceData.totalVAT &&
+           !!this.invoiceData.totalTTC &&
+           !!this.invoiceData.remainingToPay;
+  }
   
   
+  
+  onSubmit() {
+    const invoiceData: InvoiceData = {
+      emetteur: {
+        NomEntreprise: this.matchingEmetteurData.NomEntreprise,
+        NumeroSiret: this.matchingEmetteurData.NumeroSiret,
+        NumeroTVA: this.matchingEmetteurData.NumeroTVA,
+        CodePays: this.matchingCountryCode,
+      },
+      correspondant: {
+        NomEntreprise: this.matchingCorrespondantData.NomEntreprise,
+        NumeroSiret: this.matchingCorrespondantData.NumeroSiret,
+        NumeroTVA: this.matchingCorrespondantData.NumeroTVA,
+        CodePays: this.matchingCountryCode,
+      },
+      facture: {
+        CodeDevise: this.matchingdeviseCode,
+        NumeroFacture: this.invoiceData.invoiceNumber,
+        TotalHT: this.invoiceData.totalHT,
+        TotalTVA: this.invoiceData.totalVAT,
+        TotalTTC: this.invoiceData.totalTTC,
+        RestantAPayer: this.invoiceData.remainingToPay,
+      },
+      status: 'Envoyé'
+    };
+  
+    this.invoiceService.submitInvoiceData(invoiceData).subscribe(response => {
+      // Gérez la réponse ici
+      console.log("Données envoyée", invoiceData)
+    });
+  }
   
  
 }

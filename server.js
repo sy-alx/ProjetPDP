@@ -21,17 +21,45 @@ const mongoose = require('mongoose');
     console.log('Connected to the database');
     });
 
-    mongoose.connect('mongodb://localhost:27017/ProjetPDP', { useNewUrlParser: true, useUnifiedTopology: true })
+    mongoose.connect('mongodb://127.0.0.1:27017/ProjetPDP', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Could not connect to MongoDB', err));
+    console.log
 
-    const invoiceSchema = new mongoose.Schema({
-        emetteur: Object,
-        correspondant: Object,
-        invoice: Object
-    });
+    const statusMapping = {
+        1: 'Envoyé',
+        2: 'Accepté',
+        3: 'Refusé'
+    };
+      
+    const InvoiceSchema = new mongoose.Schema({
+        emetteur: {
+          NomEntreprise: String,
+          NumeroSiret: String,
+          NumeroTVA: String,
+          CodePays: String
+        },
+        correspondant: {
+          NomEntreprise: String,
+          NumeroSiret: String,
+          NumeroTVA: String,
+          CodePays: String
+        },
+        invoice: {
+          CodeDevise: String,
+          NumeroFacture: String,
+          TotalHT: String,
+          TotalTVA: String,
+          TotalTTC: String,
+          RestantAPayer: String
+        },
+        status: {
+          type: String,
+          default: 'Envoyé'
+        }
+      });
     
-    const Invoice = mongoose.model('Invoice', invoiceSchema);
+    const Invoice = mongoose.model('Invoice', InvoiceSchema);
     
     app.use(cors());
 
@@ -208,15 +236,31 @@ const mongoose = require('mongoose');
     });
   
     app.post('/api/invoices', authenticateToken, async (req, res) => {
-        let invoice = new Invoice({
-          emetteur: req.body.emetteur,
-          correspondant: req.body.correspondant,
-          invoice: req.body.invoice
-        });
-        invoice = await invoice.save();
+        try {
+          // Validez les données ici si nécessaire
       
-        res.send(invoice);
-      });
+          let invoice = new Invoice({
+            emetteur: req.body.emetteur,
+            correspondant: req.body.correspondant,
+            invoice: req.body.facture,
+            status: 'Envoyé'
+          });
+      
+          console.log('Before saving invoice:', invoice); // Ajoutez ce log
+      
+          invoice = await invoice.save();
+      
+          console.log('After saving invoice:', invoice); // Ajoutez ce log
+      
+          res.send(invoice);
+        } catch (err) {
+          // Gérez l'erreur ici, par exemple en envoyant une réponse d'erreur
+          console.log('Error saving invoice:', err); // Ajoutez ce log
+          res.status(500).send({ message: err.message });
+        }
+    });
+    
+      
       
   
   

@@ -20,9 +20,9 @@
     <br>
 
     <p-fieldset legend="Ajoutez votre Facture">
-        <p><i>Format demandé : Facture-X <sup>(PDF+XML) </sup> / XML / JSON </i></p>
+        <p><i>Format demandé : Facture-X <sup>(PDF+XML) </sup> / XML</i></p>
         <div class="upload-container">
-            <p-fileUpload #fileUpload name="demo[]" accept=".xml,.json,.pdf" (onSelect)="onUpload($event)" mode="basic"  chooseLabel="Choisir un fichier" [maxFileSize]="maxFileSize" [multiple]="false" [disabled]="!siretIsValid">
+            <p-fileUpload #fileUpload name="demo[]" accept=".xml,.pdf" (onSelect)="onUpload($event)" mode="basic"  chooseLabel="Choisir un fichier" [maxFileSize]="maxFileSize" [multiple]="false" [disabled]="!siretIsValid">
                 <p-header>
                     Glissez-déposez des fichiers ici pour les télécharger
                 </p-header>
@@ -105,6 +105,9 @@
         
     </p-fieldset>
 
-    
+    <br><br>
+
+    <button pButton type="button" label="Soumettre" (click)="onSubmit()" [disabled]="!isFormValid()"></button>
+
 
 </p-fieldset>
