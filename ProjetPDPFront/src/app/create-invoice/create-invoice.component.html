@@ -46,6 +46,10 @@
           <label>Numéro de TVA :</label>
           <p>{{matchingEmetteurData.NumeroTVA}}</p>
         </div>
+        <div class="field" *ngIf="matchingCountryCode">
+            <label>Code pays :</label>
+            <p>{{matchingCountryCode}}</p>
+        </div>
       </p-fieldset>
     
     <br>
@@ -63,11 +67,44 @@
           <label>Numéro de TVA :</label>
           <p>{{matchingCorrespondantData.NumeroTVA}}</p>
         </div>
-      </p-fieldset>
+        <div class="field" *ngIf="matchingCountryCode">
+            <label>Code pays :</label>
+            <p>{{matchingCountryCode}}</p>
+        </div>
+
+    </p-fieldset>
+
+    <br>
+
+    <p-fieldset legend="Facture">
+        <div class="field" *ngIf="matchingdeviseCode">
+            <label>Code devise: </label>
+            <p>{{matchingdeviseCode}}</p>
+        </div>
+
+        <div class="field" *ngIf="matchingCorrespondantData.NomEntreprise">
+            <label>Numéro (Réfence) de la facture :</label>
+            <p-dropdown [options]="unusedDataInvoiceNumber" [(ngModel)]="invoiceData.invoiceNumber" (onChange)="onDataSelected($event, 'invoiceNumber')"></p-dropdown>
+        </div>
+        <div class="field" *ngIf="matchingCorrespondantData.NumeroTVA">
+            <label>Total Hors Taxes (HT) :</label>
+            <p-dropdown [options]="unusedDataTotalHT" [(ngModel)]="invoiceData.totalHT" (onChange)="onDataSelected($event, 'totalHT')"></p-dropdown>
+        </div>
+        <div class="field" *ngIf="matchingCountryCode">
+            <label>Total TVA (Montant TVA) :</label>
+            <p-dropdown [options]="unusedDataTotalVAT" [(ngModel)]="invoiceData.totalVAT" (onChange)="onDataSelected($event, 'totalVAT')"></p-dropdown>
+        </div>
+        <div class="field" *ngIf="matchingCountryCode">
+            <label>Total (TTC) :</label>
+            <p-dropdown [options]="unusedDataTotalTTC" [(ngModel)]="invoiceData.totalTTC" (onChange)="onDataSelected($event, 'totalTTC')"></p-dropdown>
+        </div>
+        <div class="field" *ngIf="matchingCountryCode">
+            <label>Restant à payer (Si avoir) :</label>
+            <p-dropdown [options]="unusedDataRemainingToPay" [(ngModel)]="invoiceData.remainingToPay" (onChange)="onDataSelected($event, 'remainingToPay')"></p-dropdown>
+        </div>
+        
+    </p-fieldset>
+
     
-
-
-
-
 
 </p-fieldset>

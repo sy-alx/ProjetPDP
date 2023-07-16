@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import * as fastXmlParser from 'fast-xml-parser';
 import * as xmljs from 'xml-js';
-
+import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 // @ts-ignore
 import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+
 
 
 
@@ -16,7 +18,7 @@ import * as pdfjsLib from 'pdfjs-dist/build/pdf';
 export class PdfService {
   
 
-  constructor( private messageService: MessageService ) { pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.js';}
+  constructor( private messageService: MessageService, private http: HttpClient ) { pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.js';}
 
 
   extractAllValues(obj: any): any[] {
@@ -32,11 +34,20 @@ export class PdfService {
     return values;
   }
 
+    getUserData(siret: string): Observable<any> {
+      const token = localStorage.getItem('token');
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      return this.http.get(`http://localhost:3000/api/users/${siret}`, { headers });
+    }
 
-  compareDataWithDatabase(data: any) {
-    // Implement your logic here to compare the data with your SQL database
-    // and return the result.
-  }
+    getLoggedInUserData(): Observable<any> {
+      const token = localStorage.getItem('token');
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      return this.http.get('http://localhost:3000/api/user', { headers });
+    }
+
+
+ 
   
 
   extractXmlFromPdf(pdfData: ArrayBuffer): Promise<any> {
@@ -57,12 +68,15 @@ export class PdfService {
             const jsonData = xmljs.xml2js(xmlData, { compact: true });
             console.log(jsonData); // log the converted JSON data
             console.log(JSON.stringify(jsonData, null, 2))
-
+  
             // Extract all values
             let allValues = this.extractAllValues(jsonData);
             console.log('Tableau des valeurs',allValues); // log all values
+            return jsonData; // Return the JSON data
+          } else {
+            console.log('No XML data found in PDF.');
+            return null; // Return null if no XML data was found
           }
-          return xmlData; // Return the XML data
         } else {
           console.log('No attachments found in PDF.');
           return null; // Return null if no attachments were found
@@ -73,6 +87,7 @@ export class PdfService {
       return null; // Return null if an error occurred
     });
   }
+  
   
   
 
@@ -108,30 +123,38 @@ export class PdfService {
           const fileContent = event.target.result;
   
           if (file.type === 'application/json') {
-            try {
-              const jsonData = JSON.parse(fileContent as string);
-              resolve(jsonData);
-              console.log(JSON.stringify(jsonData, null, 2))
-
-              // Extract all values
-              let allValues = this.extractAllValues(jsonData);
-              console.log(allValues); // log all values
-            } catch (error) {
-              reject('Invalid JSON file.');
-            }
-          } else if (file.type === 'text/xml') {
-            const xmlData = fileContent as string;
-  
-            // Convert XML to JSON
-            const jsonData = xmljs.xml2js(xmlData, { compact: true });
-            console.log(jsonData); // log the converted JSON data
+            // Handle JSON files
+            const jsonData = JSON.parse(event.target.result as string);
+            console.log(jsonData); // log the JSON data
             console.log(JSON.stringify(jsonData, null, 2))
-
+  
             // Extract all values
             let allValues = this.extractAllValues(jsonData);
             console.log('Tableau des valeurs',allValues); // log all values
+            resolve(jsonData); // Return the JSON data
+          } else if (file.type === 'text/xml') {
+            // Handle XML files
+            const xmlData = event.target.result as string;
+            const jsonData = xmljs.xml2js(xmlData, { compact: true });
+            console.log(jsonData); // log the converted JSON data
+            console.log(JSON.stringify(jsonData, null, 2))
   
-            resolve(jsonData);
+            // Extract all values
+            let allValues = this.extractAllValues(jsonData);
+            console.log('Tableau des valeurs',allValues); // log all values
+            resolve(jsonData); // Return the JSON data
+          } else if (file.type === 'application/pdf') {
+            // Handle PDF files
+            const pdfData = new Uint8Array(fileContent as ArrayBuffer);
+            this.extractXmlFromPdf(pdfData).then(jsonData => {
+              if (jsonData) {
+                resolve(jsonData);
+              } else {
+                reject('No XML data found in PDF.');
+              }
+            }).catch(error => {
+              reject('Error extracting XML from PDF: ' + error);
+            });
           } else {
             reject('Unsupported file type.');
           }
@@ -144,9 +167,15 @@ export class PdfService {
         reject('Error reading file.');
       };
   
-      reader.readAsText(file);
+      if (file.type === 'application/pdf') {
+        reader.readAsArrayBuffer(file);
+      } else {
+        reader.readAsText(file);
+      }
     });
   }
+  
+  
   
 }
   

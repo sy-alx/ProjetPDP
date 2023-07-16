@@ -3,126 +3,140 @@ const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const mongoose = require('mongoose');
 
-const app = express();
-app.use(express.json()); // pour le parsing du JSON
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'utilisateurspdp'
-});
+    const app = express();
+    app.use(express.json()); // pour le parsing du JSON
 
-connection.connect((err) => {
-  if (err) throw err;
-  console.log('Connected to the database');
-});
-
-app.use(cors());
-
-// Ajoutez la fonction authenticateToken ici
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-
-  console.log('Auth Header:', authHeader); // Affiche l'en-tête d'autorisation
-  console.log('Token:', token); // Affiche le token
-
-  if (token == null) return res.sendStatus(401)
-
-  jwt.verify(token, 'secret_key', (err, user) => {
-    console.log('User:', user);
-    if (err) return res.sendStatus(403)
-    req.user = user
-    next()
-  })
-}
-
-app.post('/login', async (req, res) => {
-    const { Email, MotDePasse } = req.body;
-    console.log(`Email: ${Email}`);
-    console.log(`Password: ${MotDePasse}`);
-    const query = 'SELECT * FROM utilisateurs WHERE Email = ?';
-    console.log(`Attempting to login with Email: ${Email} and Password: ${MotDePasse}`);
-    connection.query(query, [Email], async (err, results) => {
-      if (err) {
-        console.log('Error executing query:', err);
-        throw err;
-      }
-      console.log('Query results:', results);
-      if (results.length > 0) {
-        const user = results[0];
-        const match = await bcrypt.compare(MotDePasse, user.MotDePasse);
-        if (match) {
-          const token = jwt.sign({ id: user.IDutilisateurs }, 'secret_key');
-          res.json({ token });
-        } else {
-          console.log('Invalid password');
-          res.status(401).send('Invalid password');
-        }          
-      } else {
-        console.log('Invalid email');
-        res.status(401).send('Invalid email');
-      }
+    const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'utilisateurspdp'
     });
-});
 
-// Utilisez authenticateToken comme middleware dans vos autres routes
-app.get('/dashboard', authenticateToken, (req, res) => {
-  res.send('Bienvenue sur le tableau de bord !');
-});
+    connection.connect((err) => {
+    if (err) throw err;
+    console.log('Connected to the database');
+    });
 
-// Route pour obtenir les détails de l'utilisateur
-app.get('/api/user', authenticateToken, (req, res) => {
-  const query = 'SELECT * FROM utilisateurs WHERE IDutilisateurs = ?';
-  connection.query(query, [req.user.id], (err, results) => {
-    if (err) {
-      console.log('Error executing query:', err);
-      throw err;
-    }
+    mongoose.connect('mongodb://localhost:27017/ProjetPDP', { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Could not connect to MongoDB', err));
 
-    if (results.length > 0) {
-      const user = results[0];
-      res.json(user);
-    } else {
-      res.status(404).send('User not found');
-    }
-  });
-});
-
-// Route pour modifier les détails de l'utilisateur
-app.put('/api/user', authenticateToken, (req, res) => {
-    const { Email, NumeroTelephone } = req.body;
-    const query = 'UPDATE utilisateurs SET Email = ?, NumeroTelephone = ? WHERE IDutilisateurs = ?';
+    const invoiceSchema = new mongoose.Schema({
+        emetteur: Object,
+        correspondant: Object,
+        invoice: Object
+    });
     
-    connection.query(query, [Email, NumeroTelephone, req.user.id], (err, results) => {
-      if (err) {
-        console.log('Error executing query:', err);
-        res.status(500).json({ message: 'Error updating user' });
-      } else {
-        console.log('Query results:', results);
-        res.status(200).json({ message: 'User updated successfully' });
-      }
-    });
-});
+    const Invoice = mongoose.model('Invoice', invoiceSchema);
+    
+    app.use(cors());
 
-// Route to get all users
-app.get('/api/users', authenticateToken, (req, res) => {
-    const query = 'SELECT * FROM utilisateurs';
-    connection.query(query, (err, results) => {
-      if (err) {
+    // Ajoutez la fonction authenticateToken ici
+    function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+
+    console.log('Auth Header:', authHeader); // Affiche l'en-tête d'autorisation
+    console.log('Token:', token); // Affiche le token
+
+    if (token == null) return res.sendStatus(401)
+
+    jwt.verify(token, 'secret_key', (err, user) => {
+        console.log('User:', user);
+        if (err) return res.sendStatus(403)
+        req.user = user
+        next()
+    })    
+    }
+
+    app.post('/login', async (req, res) => {
+        const { Email, MotDePasse } = req.body;
+        console.log(`Email: ${Email}`);
+        console.log(`Password: ${MotDePasse}`);
+        const query = 'SELECT * FROM utilisateurs WHERE Email = ?';
+        console.log(`Attempting to login with Email: ${Email} and Password: ${MotDePasse}`);
+        connection.query(query, [Email], async (err, results) => {
+        if (err) {
+            console.log('Error executing query:', err);
+            throw err;
+        }
+        console.log('Query results:', results);
+        if (results.length > 0) {
+            const user = results[0];
+            const match = await bcrypt.compare(MotDePasse, user.MotDePasse);
+            if (match) {
+            const token = jwt.sign({ id: user.IDutilisateurs }, 'secret_key');
+            res.json({ token });
+            } else {
+            console.log('Invalid password');
+            res.status(401).send('Invalid password');
+            }          
+        } else {
+            console.log('Invalid email');
+            res.status(401).send('Invalid email');
+        }
+        });
+    });
+
+    // Utilisez authenticateToken comme middleware dans vos autres routes
+    app.get('/dashboard', authenticateToken, (req, res) => {
+    res.send('Bienvenue sur le tableau de bord !');
+    });
+
+    // Route pour obtenir les détails de l'utilisateur
+    app.get('/api/user', authenticateToken, (req, res) => {
+    const query = 'SELECT * FROM utilisateurs WHERE IDutilisateurs = ?';
+    connection.query(query, [req.user.id], (err, results) => {
+        if (err) {
         console.log('Error executing query:', err);
         throw err;
-      }
-  
-      if (results.length > 0) {
-        res.json(results);
-      } else {
-        res.status(404).send('No users found');
-      }
+        }
+
+        if (results.length > 0) {
+        const user = results[0];
+        res.json(user);
+        } else {
+        res.status(404).send('User not found');
+        }
     });
-  });
+    });
+
+    // Route pour modifier les détails de l'utilisateur
+    app.put('/api/user', authenticateToken, (req, res) => {
+        const { Email, NumeroTelephone } = req.body;
+        const query = 'UPDATE utilisateurs SET Email = ?, NumeroTelephone = ? WHERE IDutilisateurs = ?';
+        
+        connection.query(query, [Email, NumeroTelephone, req.user.id], (err, results) => {
+        if (err) {
+            console.log('Error executing query:', err);
+            res.status(500).json({ message: 'Error updating user' });
+        } else {
+            console.log('Query results:', results);
+            res.status(200).json({ message: 'User updated successfully' });
+        }
+        });
+    });
+
+    // Route to get all users
+    app.get('/api/users', authenticateToken, (req, res) => {
+        const query = 'SELECT * FROM utilisateurs';
+        connection.query(query, (err, results) => {
+        if (err) {
+            console.log('Error executing query:', err);
+            throw err;
+        }
+    
+        if (results.length > 0) {
+            res.json(results);
+        } else {
+            res.status(404).send('No users found');
+        }
+        });
+    });
   
   
 
@@ -173,8 +187,9 @@ app.get('/api/users', authenticateToken, (req, res) => {
 
 
   // Route pour obtenir un utilisateur spécifique en fonction du numéro de SIRET
-    app.get('/api/users/:siret', authenticateToken, (req, res) => {
+  app.get('/api/users/:siret', authenticateToken, (req, res) => {
         const siret = req.params.siret;
+        console.log('Requested SIRET:', siret); // Add this line
         const query = 'SELECT * FROM utilisateurs WHERE NumeroSiret = ?';
         connection.query(query, [siret], (err, results) => {
             if (err) {
@@ -182,6 +197,7 @@ app.get('/api/users', authenticateToken, (req, res) => {
                 throw err;
             }
         
+            console.log('Query results:', results); // Add this line
             if (results.length > 0) {
                 const user = results[0];
                 res.json(user);
@@ -191,7 +207,17 @@ app.get('/api/users', authenticateToken, (req, res) => {
         });
     });
   
-  
+    app.post('/api/invoices', authenticateToken, async (req, res) => {
+        let invoice = new Invoice({
+          emetteur: req.body.emetteur,
+          correspondant: req.body.correspondant,
+          invoice: req.body.invoice
+        });
+        invoice = await invoice.save();
+      
+        res.send(invoice);
+      });
+      
   
   
 

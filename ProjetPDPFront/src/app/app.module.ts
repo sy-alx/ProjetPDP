@@ -21,6 +21,8 @@ import { MessageService } from 'primeng/api';
 import { CreateInvoiceComponent } from './create-invoice/create-invoice.component';
 import { FileUploadModule } from 'primeng/fileupload';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { DropdownModule } from 'primeng/dropdown';
+
 
 
 @NgModule({
@@ -47,7 +49,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     ToastModule,
     FileUploadModule,
     AutoCompleteModule,
-    
+    DropdownModule
   ],
   providers: [
     ConfirmationService,
