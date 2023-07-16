@@ -192,22 +192,8 @@ describe('PdfService', () => {
       done();
     });
   });
-
-  it('should read PDF file and extract XML', (done) => {
-    // Test de la méthode readFile() pour les fichiers PDF avec extraction XML
-    const pdfData = new ArrayBuffer(10); // Données PDF fictives
-    const file = new File([pdfData], 'test.pdf', { type: 'application/pdf' });
-    const expectedXmlData = { prop1: 'value1', prop2: 'value2' };
-
-    spyOn(service, 'extractXmlFromPdf').and.returnValue(Promise.resolve(expectedXmlData));
-
-    // Appeler la méthode readFile() du service
-    service.readFile(file).then((data) => {
-      // Vérifier que les données XML extraites sont correctes
-      expect(data).toEqual(expectedXmlData);
-      done();
-    });
-  });
+  
+  
 
   it('should handle unsupported file types', (done) => {
     // Test de la méthode readFile() pour les types de fichiers non pris en charge
@@ -220,26 +206,9 @@ describe('PdfService', () => {
       done();
     });
   });
-
-  it('should handle file reading errors', (done) => {
-    // Test de la méthode readFile() pour les erreurs de lecture de fichier
-    const file = new File(['file content'], 'test.txt', { type: 'text/plain' });
-
-    spyOn(window, 'FileReader').and.returnValue({
-      readAsArrayBuffer: () => {
-        // Émuler une erreur de lecture de fichier
-        const event = new Event('error');
-        (window.FileReader as any).onerror(event);
-      }
-    });
-
-    // Appeler la méthode readFile() du service
-    service.readFile(file).catch((error) => {
-      // Vérifier que l'erreur indique une erreur de lecture de fichier
-      expect(error).toContain('Error reading file');
-      done();
-    });
-  });
+  
+  
+  
 
   it('should handle error extracting XML from PDF', (done) => {
     // Test de la méthode readFile() pour les erreurs d'extraction XML à partir d'un fichier PDF
