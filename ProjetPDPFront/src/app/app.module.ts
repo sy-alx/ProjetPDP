@@ -11,8 +11,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MenubarModule } from 'primeng/menubar';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ConfirmationService} from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProfilComponent } from './profil/profil.component';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -22,6 +22,11 @@ import { CreateInvoiceComponent } from './create-invoice/create-invoice.componen
 import { FileUploadModule } from 'primeng/fileupload';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { DropdownModule } from 'primeng/dropdown';
+import { InvoiceTraitementComponent } from './invoice-traitement/invoice-traitement.component';
+import { TableModule} from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+
+
 
 
 
@@ -31,7 +36,8 @@ import { DropdownModule } from 'primeng/dropdown';
     LoginComponent,
     DashboardComponent,
     ProfilComponent,
-    CreateInvoiceComponent
+    CreateInvoiceComponent,
+    InvoiceTraitementComponent
   ],
   imports: [
     BrowserModule,
@@ -49,11 +55,14 @@ import { DropdownModule } from 'primeng/dropdown';
     ToastModule,
     FileUploadModule,
     AutoCompleteModule,
-    DropdownModule
+    DropdownModule,
+    TableModule,
+    DialogModule
   ],
   providers: [
     ConfirmationService,
-    MessageService
+    MessageService,
+    
   ],
   bootstrap: [AppComponent]
 })

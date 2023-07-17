@@ -262,12 +262,12 @@ export class CreateInvoiceComponent implements OnInit {
         TotalTTC: this.invoiceData.totalTTC,
         RestantAPayer: this.invoiceData.remainingToPay,
       },
-      status: 'Envoyé'
+      status: 'En cours'
     };
   
     this.invoiceService.submitInvoiceData(invoiceData).subscribe(response => {
       // Gérez la réponse ici
-      console.log("Données envoyée", invoiceData)
+      
     });
   }
   

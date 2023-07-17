@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const xml = require('xml');
+const convert = require('xml-js');
 
 
     const app = express();
@@ -27,7 +29,7 @@ const mongoose = require('mongoose');
     console.log
 
     const statusMapping = {
-        1: 'Envoyé',
+        1: 'En cours',
         2: 'Accepté',
         3: 'Refusé'
     };
@@ -55,7 +57,7 @@ const mongoose = require('mongoose');
         },
         status: {
           type: String,
-          default: 'Envoyé'
+          default: 'En cours'
         }
       });
     
@@ -243,7 +245,7 @@ const mongoose = require('mongoose');
             emetteur: req.body.emetteur,
             correspondant: req.body.correspondant,
             invoice: req.body.facture,
-            status: 'Envoyé'
+            status: 'En cours'
           });
       
           console.log('Before saving invoice:', invoice); // Ajoutez ce log
@@ -259,11 +261,68 @@ const mongoose = require('mongoose');
           res.status(500).send({ message: err.message });
         }
     });
+
+
+    app.get('/api/invoices/:siret', authenticateToken, async (req, res) => {
+        try {
+            const siret = req.params.siret;
+            const invoices = await Invoice.find({ 
+                'correspondant.NumeroSiret': siret,
+                'status': 'En cours'
+            });
+            res.send(invoices);
+        } catch (err) {
+            console.log('Error getting invoices:', err);
+            res.status(500).send({ message: err.message });
+        }
+    });
+
+
+
+    // Route pour télécharger la facture en format JSON
+    app.get('/api/invoices/json/:invoiceId', authenticateToken, async (req, res) => {
+        try {
+            const invoiceId = req.params.invoiceId;
+            const invoice = await Invoice.findById(invoiceId);
+            res.json(invoice);
+        } catch (err) {
+            console.log('Error getting invoice:', err);
+            res.status(500).send({ message: err.message });
+        }
+    });
+
+    // Route pour télécharger la facture en format XML
+    app.get('/api/invoices/xml/:invoiceId', authenticateToken, async (req, res) => {
+        try {
+            const invoiceId = req.params.invoiceId;
+            const invoice = await Invoice.findById(invoiceId);
+            if (!invoice) {
+                return res.status(404).send({ message: 'Invoice not found' });
+            }
     
+            const xml = convert.js2xml(invoice.toJSON(), {compact: true, ignoreComment: true, spaces: 4});
+            res.set('Content-Type', 'text/xml');
+            res.send(xml);
+        } catch (err) {
+            console.log('Error downloading invoice:', err);
+            res.status(500).send({ message: err.message });
+        }
+    });
+    
+    app.put('/api/invoices/:id', authenticateToken, async (req, res) => {
+        try {
+          const id = req.params.id;
+          const status = req.body.status;
+          const invoice = await Invoice.findOneAndUpdate({ _id: id }, { status: statusMapping[status] }, { new: true });
+          res.send(invoice);
+        } catch (err) {
+          console.log('Error updating invoice:', err);
+          res.status(500).send({ message: err.message });
+        }
+    });
       
       
-  
-  
+
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

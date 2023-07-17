@@ -21,6 +21,8 @@
     "os-browserify": "^0.3.0",
     "pdfjs-dist": "^3.8.162",
     "primeng": "^16.0.2",
+    "xml": "^1.0.1",
+    "xml-js": "^1.6.11",
     "xml2js": "^0.6.0"
   },
   "devDependencies": {

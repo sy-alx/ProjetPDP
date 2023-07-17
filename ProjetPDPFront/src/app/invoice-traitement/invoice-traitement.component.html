@@ -1,0 +1,82 @@
+<button pButton type="button" label="Retour au tableau de bord" (click)="goToDashboard()"></button>
+
+<br><br>
+
+<p-table [value]="invoices">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nom entreprise</th>
+        <th>Numéro de Siret</th>
+        <th>Total TTC</th>
+        <th>Facture</th>
+        <th>Statut</th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-invoice>
+      <tr>
+        <td>{{invoice.emetteur.NomEntreprise}}</td>
+        <td>{{invoice.emetteur.NumeroSiret}}</td>
+        <td>{{invoice.invoice.TotalTTC}}</td>
+        <td>
+            <button pButton icon="pi pi-eye" (click)="showInvoiceDetails(invoice)" pTooltip="Voir toutes les informations"></button>
+        </td>
+        <td>{{invoice.status}}</td>
+        <td>
+            <p-button icon="pi pi-check" class="buttonAction" (click)="onAccept(invoice)" pTooltip="Accepter"></p-button>
+            <p-button icon="pi pi-times" class="buttonAction" (click)="onReject(invoice)" pTooltip="Refuser"></p-button>
+            <p-button icon="pi pi-download" class="buttonAction" (click)="onDownload(invoice)" pTooltip="Télécharger"></p-button>
+        </td>
+          
+      </tr>
+    </ng-template>
+</p-table>
+
+<p-confirmDialog></p-confirmDialog>
+
+
+<p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{width: '50vw'}" [closable]="false">
+    <p-header>
+      Détails de la facture
+    </p-header>
+    <div *ngIf="currentInvoice">
+      <p>Informations Émetteur</p>
+      <div>Nom de l'entreprise : {{currentInvoice.emetteur.NomEntreprise}}</div>
+      <div>Numéro de Siret : {{currentInvoice.emetteur.NumeroSiret}}</div>
+      <div>Numéro de TVA : {{currentInvoice.emetteur.NumeroTVA}}</div>
+      <div>Code pays : {{currentInvoice.emetteur.CodePays}}</div>
+        <br>
+      <p>Informations Correspondant</p>
+      <div>Votre nom d'entreprise : {{currentInvoice.correspondant.NomEntreprise}}</div>
+      <div>Votre Siret : {{currentInvoice.correspondant.NumeroSiret}}</div>
+      <div>Votre numéro de TVA : {{currentInvoice.correspondant.NumeroTVA}}</div>
+      <div>Votre code pays : {{currentInvoice.correspondant.CodePays}}</div>
+        <br>
+      <p>Informations de facturation</p>
+      <div>Numéro de facture : {{currentInvoice.invoice.NumeroFacture}}</div>
+      <div>Devise : {{currentInvoice.invoice.CodeDevise}}</div>
+      <div>Total HT : {{currentInvoice.invoice.TotalHT}}</div>
+      <div>Total TVA : {{currentInvoice.invoice.TotalTVA}}</div>
+      <div>Total TTC : {{currentInvoice.invoice.TotalTTC}}</div>
+      <div>Montant à payer : {{currentInvoice.invoice.RestantAPayer}}</div>
+      <!-- Ajoutez ici d'autres détails de la facture -->
+    </div>
+    <p-footer>
+      <button type="button" pButton icon="pi pi-times" label="Fermer" (click)="displayDialog = false"></button>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog [(visible)]="displayDownloadDialog" [modal]="true" [style]="{width: '50vw'}" [closable]="false">
+    <p-header>
+      Télécharger la facture
+    </p-header>
+    <p>Choisissez le format de téléchargement de la facture :</p>
+    <p-button label="JSON" class="buttonAction" icon="pi pi-file-export" (click)="downloadInvoice(currentInvoice._id, 'json')"></p-button>
+    <p-button label="XML" icon="pi pi-file-export" (click)="downloadInvoice(currentInvoice._id, 'xml')"></p-button>
+    <p-footer>
+      <p-button label="Annuler" icon="pi pi-times" (click)="displayDownloadDialog = false"></p-button>
+    </p-footer>
+  </p-dialog>
+  
+  
+  

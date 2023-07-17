@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
         label: 'Traiter mes factures',
         icon: 'pi pi-fw pi-pencil',
         command: () => {
-          // Votre code pour traiter les factures
+          this.router.navigate(['/invoice-traitement']);
         }
       },
       {
