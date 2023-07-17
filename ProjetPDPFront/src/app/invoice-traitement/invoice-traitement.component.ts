@@ -22,7 +22,7 @@ export class InvoiceTraitementComponent implements OnInit{
   displayDialog = false;
   currentInvoice: any;
   displayDownloadDialog = false;
-
+  decisionMade = false;
 
   constructor(private router: Router, private http: HttpClient, private confirmationService: ConfirmationService, private messageService: MessageService) { }
 
@@ -58,12 +58,15 @@ export class InvoiceTraitementComponent implements OnInit{
       message: 'Êtes-vous sûr de vouloir accepter cette facture ?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Oui',
+      rejectLabel: 'Non',
       accept: () => {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
         this.http.put(`http://localhost:3000/api/invoices/${invoice._id}`, { status: 2 }, { headers })
           .subscribe(() => {
             invoice.status = 'Accepté';
+            this.decisionMade = true;
             this.messageService.add({severity:'success', summary:'Facture acceptée', detail:'La facture a été acceptée.'});
           });
       }
@@ -76,12 +79,15 @@ export class InvoiceTraitementComponent implements OnInit{
       message: 'Êtes-vous sûr de vouloir refuser cette facture ?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Oui',
+      rejectLabel: 'Non',
       accept: () => {
         const token = localStorage.getItem('token');
         const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
         this.http.put(`http://localhost:3000/api/invoices/${invoice._id}`, { status: 3 }, { headers })
           .subscribe(() => {
             invoice.status = 'Refusé';
+            this.decisionMade = true;
             this.messageService.add({severity:'error', summary:'Facture refusée', detail:'La facture a été refusée.'});
           });
       }
@@ -105,6 +111,7 @@ export class InvoiceTraitementComponent implements OnInit{
             link.href = downloadURL;
             link.download = `invoice_${invoiceId}.${format}`;
             link.click();
+            this.messageService.add({severity:'info', summary:'Téléchargement de la facture', });
     });
   }
 
@@ -114,7 +121,22 @@ export class InvoiceTraitementComponent implements OnInit{
   
 
   goToDashboard() {
-    this.router.navigate(['/dashboard']);
+    if (this.decisionMade) {
+      this.confirmationService.confirm({
+        message: 'Si vous revenez au tableau de bord, vous ne pourrez plus modifier votre réponse et vous ne pourrez télécharger votre facture. Êtes-vous sûr de vouloir continuer ?',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Oui',
+        rejectLabel: 'Non',
+        accept: () => {
+          this.router.navigate(['/dashboard']);
+        }
+      });
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
   }
+  
+  
 
 }

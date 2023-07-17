@@ -277,6 +277,23 @@ const convert = require('xml-js');
         }
     });
 
+    app.get('/api/invoices/closed/:siret', authenticateToken, async (req, res) => {
+        try {
+            const siret = req.params.siret;
+            const invoices = await Invoice.find({ 
+                $or: [
+                    { 'emetteur.NumeroSiret': siret },
+                    { 'correspondant.NumeroSiret': siret }
+                ],
+                'status': { $in: ['Accepté', 'Refusé'] }
+            });
+            res.send(invoices);
+        } catch (err) {
+            console.log('Error getting invoices:', err);
+            res.status(500).send({ message: err.message });
+        }
+    });
+
 
 
     // Route pour télécharger la facture en format JSON

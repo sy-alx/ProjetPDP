@@ -44,7 +44,7 @@ export class DashboardComponent implements OnInit {
         label: 'Historique des factures',
         icon: 'pi pi-fw pi-file',
         command: () => {
-          // Votre code pour afficher l'historique des factures
+          this.router.navigate(['/invoice-history']);
         }
       },
       {

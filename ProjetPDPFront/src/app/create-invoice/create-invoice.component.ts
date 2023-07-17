@@ -8,6 +8,8 @@ import { FileUpload } from 'primeng/fileupload';
 import { ViewChild } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ConfirmationService, ConfirmEventType } from 'primeng/api';
+
 
 import { InvoiceService } from '../services/invoice-service.service'; 
 import { InvoiceData } from '../invoice-data.model';
@@ -50,6 +52,8 @@ export class CreateInvoiceComponent implements OnInit {
   selectedValues: string[] = [];
 
   unusedData: {label: string, value: string}[] = [];
+  unusedDataWithoutLetters: { label: string, value: string }[] = [];
+
 
 
   
@@ -58,7 +62,8 @@ export class CreateInvoiceComponent implements OnInit {
   emetteur: any = {};
   correspondant: any = {};
 
-  constructor(private router: Router, private pdfService: PdfService, private http: HttpClient, private messageService: MessageService, private cdr: ChangeDetectorRef, private invoiceService: InvoiceService) { }
+
+  constructor(private router: Router, private pdfService: PdfService, private http: HttpClient, private messageService: MessageService, private cdr: ChangeDetectorRef, private invoiceService: InvoiceService, private confirmationService: ConfirmationService) { }
 
 
   ngOnInit(): void {
@@ -193,14 +198,20 @@ export class CreateInvoiceComponent implements OnInit {
       let unusedData = fileDataValues.filter(value => !this.matchingData.includes(value) && value.length <= 25);
       this.unusedData = unusedData.map(value => ({ label: value, value: value }));
       console.log("Les données non utilisé :", this.unusedData)
-      
+
       // Initialize the dropdown options with unusedData
       this.unusedDataInvoiceNumber = [{label: '', value: ''}, ...this.unusedData];
-      this.unusedDataCurrencyCode = [{label: '', value: ''}, ...this.unusedData];
-      this.unusedDataTotalHT = [{label: '', value: ''}, ...this.unusedData];
-      this.unusedDataTotalVAT = [{label: '', value: ''}, ...this.unusedData];
-      this.unusedDataTotalTTC = [{label: '', value: ''}, ...this.unusedData];
-      this.unusedDataRemainingToPay = [{label: '', value: ''}, ...this.unusedData];
+
+      // Filtrer les données non utilisées pour éliminer celles qui contiennent des lettres
+      let unusedDataWithoutLetters = unusedData.filter(value => !/[a-zA-Z]/.test(value));
+      this.unusedDataWithoutLetters = unusedDataWithoutLetters.map(value => ({ label: value, value: value }));
+
+      this.unusedDataCurrencyCode = [{label: '', value: ''}, ...this.unusedDataWithoutLetters];
+      this.unusedDataTotalHT = [{label: '', value: ''}, ...this.unusedDataWithoutLetters];
+      this.unusedDataTotalVAT = [{label: '', value: ''}, ...this.unusedDataWithoutLetters];
+      this.unusedDataTotalTTC = [{label: '', value: ''}, ...this.unusedDataWithoutLetters];
+      this.unusedDataRemainingToPay = [{label: '', value: ''}, ...this.unusedDataWithoutLetters];
+
       
                     
 
@@ -216,18 +227,19 @@ export class CreateInvoiceComponent implements OnInit {
 
   
   
-  updateDropdownOptions() {
-    let dropdownOptions = [{label: '', value: ''}, ...this.unusedData];
-    this.unusedDataInvoiceNumber = this.unusedData.some(data => data.value === this.invoiceData.invoiceNumber) ? this.unusedData : dropdownOptions;
-    this.unusedDataCurrencyCode = this.unusedData.some(data => data.value === this.invoiceData.currencyCode) ? this.unusedData : dropdownOptions;
-    this.unusedDataTotalHT = this.unusedData.some(data => data.value === this.invoiceData.totalHT) ? this.unusedData : dropdownOptions;
-    this.unusedDataTotalVAT = this.unusedData.some(data => data.value === this.invoiceData.totalVAT) ? this.unusedData : dropdownOptions;
-    this.unusedDataTotalTTC = this.unusedData.some(data => data.value === this.invoiceData.totalTTC) ? this.unusedData : dropdownOptions;
-    this.unusedDataRemainingToPay = this.unusedData.some(data => data.value === this.invoiceData.remainingToPay) ? this.unusedData : dropdownOptions;
-  
-    // Force change detection
-    this.cdr.detectChanges();
-  }
+updateDropdownOptions() {
+  let dropdownOptions = [{label: '', value: ''}, ...this.unusedDataWithoutLetters];
+  this.unusedDataInvoiceNumber = this.unusedData.some(data => data.value === this.invoiceData.invoiceNumber) ? this.unusedData : [{label: '', value: ''}, ...this.unusedData];
+  this.unusedDataCurrencyCode = this.unusedDataWithoutLetters.some(data => data.value === this.invoiceData.currencyCode) ? this.unusedDataWithoutLetters : dropdownOptions;
+  this.unusedDataTotalHT = this.unusedDataWithoutLetters.some(data => data.value === this.invoiceData.totalHT) ? this.unusedDataWithoutLetters : dropdownOptions;
+  this.unusedDataTotalVAT = this.unusedDataWithoutLetters.some(data => data.value === this.invoiceData.totalVAT) ? this.unusedDataWithoutLetters : dropdownOptions;
+  this.unusedDataTotalTTC = this.unusedDataWithoutLetters.some(data => data.value === this.invoiceData.totalTTC) ? this.unusedDataWithoutLetters : dropdownOptions;
+  this.unusedDataRemainingToPay = this.unusedDataWithoutLetters.some(data => data.value === this.invoiceData.remainingToPay) ? this.unusedDataWithoutLetters : dropdownOptions;
+
+  // Force change detection
+  this.cdr.detectChanges();
+}
+
 
 
   isFormValid(): boolean {
@@ -241,35 +253,48 @@ export class CreateInvoiceComponent implements OnInit {
   
   
   onSubmit() {
-    const invoiceData: InvoiceData = {
-      emetteur: {
-        NomEntreprise: this.matchingEmetteurData.NomEntreprise,
-        NumeroSiret: this.matchingEmetteurData.NumeroSiret,
-        NumeroTVA: this.matchingEmetteurData.NumeroTVA,
-        CodePays: this.matchingCountryCode,
-      },
-      correspondant: {
-        NomEntreprise: this.matchingCorrespondantData.NomEntreprise,
-        NumeroSiret: this.matchingCorrespondantData.NumeroSiret,
-        NumeroTVA: this.matchingCorrespondantData.NumeroTVA,
-        CodePays: this.matchingCountryCode,
-      },
-      facture: {
-        CodeDevise: this.matchingdeviseCode,
-        NumeroFacture: this.invoiceData.invoiceNumber,
-        TotalHT: this.invoiceData.totalHT,
-        TotalTVA: this.invoiceData.totalVAT,
-        TotalTTC: this.invoiceData.totalTTC,
-        RestantAPayer: this.invoiceData.remainingToPay,
-      },
-      status: 'En cours'
-    };
-  
-    this.invoiceService.submitInvoiceData(invoiceData).subscribe(response => {
-      // Gérez la réponse ici
-      
+    this.confirmationService.confirm({
+        message: 'Êtes-vous sûr de vouloir soumettre cette facture ?',
+        header: 'Confirmation',
+        icon: 'pi pi-spin pi-spinner',
+        acceptLabel: 'Oui',
+        rejectLabel: 'Non',
+        accept: () => {
+            const invoiceData: InvoiceData = {
+                emetteur: {
+                    NomEntreprise: this.matchingEmetteurData.NomEntreprise,
+                    NumeroSiret: this.matchingEmetteurData.NumeroSiret,
+                    NumeroTVA: this.matchingEmetteurData.NumeroTVA,
+                    CodePays: this.matchingCountryCode,
+                },
+                correspondant: {
+                    NomEntreprise: this.matchingCorrespondantData.NomEntreprise,
+                    NumeroSiret: this.matchingCorrespondantData.NumeroSiret,
+                    NumeroTVA: this.matchingCorrespondantData.NumeroTVA,
+                    CodePays: this.matchingCountryCode,
+                },
+                facture: {
+                    CodeDevise: this.matchingdeviseCode,
+                    NumeroFacture: this.invoiceData.invoiceNumber,
+                    TotalHT: this.invoiceData.totalHT,
+                    TotalTVA: this.invoiceData.totalVAT,
+                    TotalTTC: this.invoiceData.totalTTC,
+                    RestantAPayer: this.invoiceData.remainingToPay,
+                },
+                status: 'En cours'
+            };
+
+            this.invoiceService.submitInvoiceData(invoiceData).subscribe(response => {
+                // Gérez la réponse ici
+                this.messageService.add({severity:'success', summary:'Succès', detail:`La facture a été transmise à ${this.matchingCorrespondantData.NomEntreprise}`});
+                setTimeout(() => {
+                    location.reload();
+                }, 3000); 
+            });
+        }
     });
-  }
+}
+
   
  
 }

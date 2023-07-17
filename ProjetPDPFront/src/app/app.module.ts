@@ -25,6 +25,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InvoiceTraitementComponent } from './invoice-traitement/invoice-traitement.component';
 import { TableModule} from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
+import { InvoiceHistoryComponent } from './invoice-history/invoice-history.component';
 
 
 
@@ -37,7 +38,8 @@ import { DialogModule } from 'primeng/dialog';
     DashboardComponent,
     ProfilComponent,
     CreateInvoiceComponent,
-    InvoiceTraitementComponent
+    InvoiceTraitementComponent,
+    InvoiceHistoryComponent
   ],
   imports: [
     BrowserModule,
