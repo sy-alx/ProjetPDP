@@ -1,17 +1,36 @@
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
+import { AuthGuard } from './auth.guard';
 
-import { authGuard } from './auth.guard';
-
-describe('authGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) => 
-      TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+describe('AuthGuard', () => {
+  let guard: AuthGuard;
+  let router: Router;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
+      providers: [AuthGuard]
+    });
+    guard = TestBed.inject(AuthGuard);
+    router = TestBed.inject(Router);
   });
 
   it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
+    expect(guard).toBeTruthy();
+  });
+
+  it('should allow navigation when token is present', () => {
+    localStorage.setItem('token', 'example-token');
+    const canActivate = guard.canActivate({} as any, {} as any);
+    expect(canActivate).toBe(true);
+  });
+
+  it('should redirect to login page when token is not present', () => {
+    localStorage.removeItem('token');
+    spyOn(router, 'navigate');
+    const canActivate = guard.canActivate({} as any, {} as any);
+    expect(canActivate).toBe(false);
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 });
