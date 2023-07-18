@@ -242,13 +242,20 @@ updateDropdownOptions() {
 
 
 
-  isFormValid(): boolean {
-    return !!this.invoiceData.invoiceNumber &&
-           !!this.invoiceData.totalHT &&
-           !!this.invoiceData.totalVAT &&
-           !!this.invoiceData.totalTTC &&
-           !!this.invoiceData.remainingToPay;
-  }
+isFormValid(): boolean {
+  return !!this.invoiceData.invoiceNumber &&
+         !!this.invoiceData.totalHT &&
+         !!this.invoiceData.totalVAT &&
+         !!this.invoiceData.totalTTC &&
+         !!this.invoiceData.remainingToPay &&
+         !!this.matchingEmetteurData.NomEntreprise &&
+         !!this.matchingEmetteurData.NumeroSiret &&
+         !!this.matchingEmetteurData.NumeroTVA &&
+         !!this.matchingCorrespondantData.NomEntreprise &&
+         !!this.matchingCorrespondantData.NumeroSiret &&
+         !!this.matchingCorrespondantData.NumeroTVA;
+}
+
   
   
   
