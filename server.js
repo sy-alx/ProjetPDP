@@ -14,7 +14,7 @@ const convert = require('xml-js');
     const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: 'root',
     database: 'utilisateurspdp'
     });
 
