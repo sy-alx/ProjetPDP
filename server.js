@@ -6,6 +6,28 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const xml = require('xml');
 const convert = require('xml-js');
+const swaggerJSDoc = require('swagger-jsdoc')
+const swaggerUI = require ('swagger-ui-express')
+
+
+const options ={
+    definition:{
+        openapi : '3.0.0',
+        info : {
+            title : 'api nodejs',
+            version : '1.0.0'
+        },
+        servers:[
+            {
+            api:'http://localhost:3000'
+            }
+        ]
+    },
+    apis:['./server.js']
+}
+
+const swaggerSpec = swaggerJSDoc(options)
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec))
 
 
     const app = express();
