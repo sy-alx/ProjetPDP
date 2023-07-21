@@ -30,3 +30,7 @@ Se sont les quatre opérations de base que l'on peut effectuer sur les données 
 
 - exemple de requête DELETE : 
 ![Alt text](IMG/ExempleDELETE.png)
+
+
+## Accès a swagger : 
+http://localhost:3000/api-docs/
